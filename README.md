@@ -123,20 +123,22 @@ You can select one of the distributes traces, in my case i clicked on the Checko
 <p align="center"><img src="/image/distributed_trace.png" width="70%" alt="traces /></p>
 
 ### Nginx Web Server instrumentation
-
 Now let's instrument a traditionnal nginx webserver.
 To do so we will first need to create a specific namespace:
+
 ```shell
 kubectl create ns nginx-example
 kubectl label namespace  nginx-example oneagent=false
 ```
 
 Then we want to configure the instrumentation that would be applied on our future nginx deployment:
+
 ```shell
 kubect apply -f opentelemetry/Instrumentation.yaml -n nginx-example
 ```
 
 Once the instrumentation object is deployed you can deploy your nginx deployments:
+
 ```shell
 kubect apply -f  nginx/basic_web1.yaml -n nginx-example
 kubect apply -f nginx/nginx_deploy.yaml -n nginx-example
