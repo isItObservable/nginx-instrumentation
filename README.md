@@ -114,11 +114,11 @@ If you open your Dynatrace Tenant, and open The `Services` application , you sho
 
 <p align="center"><img src="/image/services.png" width="70%" alt="services /></p>
 
-and if you open this service you will find all the various application using this ingress:
+And if you open this service you will find all the various application using this ingress:
 
 <p align="center"><img src="/image/nginx_ingress.png" width="70%" alt="nginx /></p>
 
-you can select one of the distributes traces, in my case i clicked on the Checkout transaction
+You can select one of the distributes traces, in my case i clicked on the Checkout transaction
 
 <p align="center"><img src="/image/distributed_trace.png" width="70%" alt="traces /></p>
 
@@ -145,14 +145,14 @@ IP=$(kubectl get svc ingress-nginx-controller -n ingress-nginx -ojson | jq -j '.
 
 if now you open you browser on the url : `http://nginx1.$IP.nip.io` and wait few seconds
 
-you can open your Dynatrace Tenant, and open The `Services` application , you should find a dedicated service for our nginx1 webserver
+You can open your Dynatrace Tenant, and open The `Services` application , you should find a dedicated service for our nginx1 webserver
 
 <p align="center"><img src="/image/nginx1.png" width="70%" alt="nginx1 /></p>
 
-and if you open this service you will find all the various application using this ingress:
+And if you open this service you will find all the various application using this ingress:
 
 <p align="center"><img src="/image/nginx1_service.png" width="70%" alt="webserver_service /></p>
 
-you can select one of the distributes traces availabe in this screen you will see the trace produced by the auto-instrumentation :
+You can select one of the distributes traces available in this screen you will see the trace produced by the auto-instrumentation :
 
 <p align="center"><img src="/image/nginx1_trace.png" width="70%" alt="traces /></p>
