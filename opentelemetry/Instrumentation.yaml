@@ -1,0 +1,39 @@
+apiVersion: opentelemetry.io/v1alpha1
+kind: Instrumentation
+metadata:
+  name: nginx1-instrumentation
+spec:
+  exporter:
+    endpoint: http://otel-collector.default.svc.cluster.local:4317
+  propagators:
+    - tracecontext
+    - baggage
+    - b3
+  sampler:
+    type: always_on
+    argument: "1"
+  nginx:
+    attrs:
+      - name: NginxModuleServiceName
+        value: "nginx1"
+      - name: NginxModuleOperationName
+        value: "servingPage1"
+---
+apiVersion: opentelemetry.io/v1alpha1
+kind: Instrumentation
+metadata:
+  name: nginx2-instrumentation
+spec:
+  exporter:
+    endpoint: http://otel-collector.default.svc.cluster.local:4317
+  propagators:
+    - tracecontext
+    - baggage
+    - b3
+  sampler:
+    type: always_on
+    argument: "1"
+  nginx:
+    attrs:
+      - name: NginxModuleServiceName
+        value: "nginx2"

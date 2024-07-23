@@ -1,0 +1,171 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment-1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: nginx
+        version: v1
+      annotations:
+        instrumentation.opentelemetry.io/inject-nginx: "nginx1-instrumentation"
+        oneagent.dynatrace.com/inject: "false"
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 3000
+        fsGroup: 3000
+      containers:
+        - name: nginx
+          image: nginxinc/nginx-unprivileged:1.25.3
+          env:
+            - name: LD_LIBRARY_PATH
+              value: /opt
+          ports:
+            - containerPort: 8765
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /usr/share/nginx/html #nginx specific
+            - name: nginxconf
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: my-config1
+        - name: nginxconf
+          configMap:
+            name: nginxconf
+            items:
+              - key: nginx.conf
+                path: nginx.conf
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx1
+spec:
+  type: ClusterIP
+  selector:
+    app: nginx
+    version: v1
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8765
+      appProtocol: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment-2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: nginx
+        version: v2
+      annotations:
+        instrumentation.opentelemetry.io/inject-nginx: "nginx2-instrumentation"
+        oneagent.dynatrace.com/inject: "false"
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 3000
+        fsGroup: 3000
+      containers:
+        - name: nginx
+          image: nginxinc/nginx-unprivileged:1.25.3
+          env:
+           - name: LD_LIBRARY_PATH
+             value: /opt
+          ports:
+            - containerPort: 8765
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /usr/share/nginx/html #nginx specific
+            - name: nginxconf
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: my-config2
+        - name: nginxconf
+          configMap:
+            name: nginxconf
+            items:
+              - key: nginx.conf
+                path: nginx.conf
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx2
+spec:
+  type: ClusterIP
+  selector:
+    app: nginx
+    version: v2
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8765
+      appProtocol: http
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nginx1-app-ingress
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    nginx.ingress.kubernetes.io/enable-opentelemetry: "true"
+    nginx.ingress.kubernetes.io/opentelemetry-trust-incoming-span: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: "nginx1.IP_TO_REPLACE.nip.io"
+      http:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: nginx1
+                port:
+                  number: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nginx2-app-ingress
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    nginx.ingress.kubernetes.io/enable-opentelemetry: "true"
+    nginx.ingress.kubernetes.io/opentelemetry-trust-incoming-span: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: "nginx2.IP_TO_REPLACE.nip.io"
+      http:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: nginx2
+                port:
+                  number: 8080
