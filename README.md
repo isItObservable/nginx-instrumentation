@@ -112,15 +112,15 @@ The deployment script of this tutorial has already:
 
 If you open your Dynatrace Tenant, and open The `Services` application , you should find a dedicated service for our ingress controller
 
-<p align="center"><img src="/image/services.png" width="70%" alt="services /></p>
+<p align="center"><img src="/image/services.png" width="70%" alt="services" /></p>
 
 And if you open this service you will find all the various application using this ingress:
 
-<p align="center"><img src="/image/nginx_ingress.png" width="70%" alt="nginx /></p>
+<p align="center"><img src="/image/nginx_ingress.png" width="70%" alt="nginx" /></p>
 
-You can select one of the distributes traces, in my case i clicked on the Checkout transaction
+You can select one of the distributes traces, in my case I clicked on the Checkout transaction
 
-<p align="center"><img src="/image/distributed_trace.png" width="70%" alt="traces /></p>
+<p align="center"><img src="/image/distributed_trace.png" width="70%" alt="trace"s /></p>
 
 ### Nginx Web Server instrumentation
 Now let's instrument a traditionnal nginx webserver.
@@ -145,16 +145,16 @@ kubect apply -f nginx/nginx_deploy.yaml -n nginx-example
 IP=$(kubectl get svc ingress-nginx-controller -n ingress-nginx -ojson | jq -j '.status.loadBalancer.ingress[].ip')
 ```
 
-if now you open you browser on the url : `http://nginx1.$IP.nip.io` and wait few seconds
+if now you open your browser on the url : `http://nginx1.$IP.nip.io` and wait few seconds
 
 You can open your Dynatrace Tenant, and open The `Services` application , you should find a dedicated service for our nginx1 webserver
 
-<p align="center"><img src="/image/nginx1.png" width="70%" alt="nginx1 /></p>
+<p align="center"><img src="/image/nginx1.png" width="70%" alt="nginx1" /></p>
 
 And if you open this service you will find all the various application using this ingress:
 
-<p align="center"><img src="/image/nginx1_service.png" width="70%" alt="webserver_service /></p>
+<p align="center"><img src="/image/nginx1_service.png" width="70%" alt="webserver_service" /></p>
 
 You can select one of the distributes traces available in this screen you will see the trace produced by the auto-instrumentation :
 
-<p align="center"><img src="/image/nginx1_trace.png" width="70%" alt="traces /></p>
+<p align="center"><img src="/image/nginx1_trace.png" width="70%" alt="traces" /></p>
